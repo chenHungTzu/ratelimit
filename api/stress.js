@@ -12,7 +12,7 @@ export default function () {
         },
     };
     // 這邊是要測試的API
-    let response = http.get('http://localhost:55003/WeatherForecast', params); 
+    let response = http.get('http://localhost:8081/WeatherForecast', params); 
 
     console.log(response.status);
 
