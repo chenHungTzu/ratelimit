@@ -2,8 +2,8 @@ import http from 'k6/http';
 import { sleep ,check} from 'k6';
 
 export let options = {
-    vus: 2, // 這邊固定負載，分別以1、2個vu 來測試
-    duration: '1m', // 持續時間一分鐘
+    vus: 1, // 這邊固定負載，分別以1、2個vu 來測試
+    duration: '5s', // 持續時間一分鐘
 };
 export default function () {
     const params = {
@@ -12,7 +12,7 @@ export default function () {
         },
     };
     // 這邊是要測試的API
-    let response = http.get('http://localhost:8081/WeatherForecast', params); 
+    let response = http.get('http://localhost:55003/WeatherForecast', params); 
 
     console.log(response.status);
 

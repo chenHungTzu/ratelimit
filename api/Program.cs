@@ -49,12 +49,20 @@ internal class Program
 
         // 註冊 REDIS計數器處理策略(fixed window) 
         // 註冊 IP 限制策略 & ClientID 限制策略 的資料來源 
-        builder.Services.AddRedisRateLimiting();
-
+        //builder.Services.AddRedisRateLimiting();
+ 
+        
+        builder.Services.AddSingleton<IIpPolicyStore, DistributedCacheIpPolicyStore>();
+        builder.Services.AddSingleton<IClientPolicyStore, DistributedCacheClientPolicyStore>();
+        builder.Services.AddSingleton<IRateLimitCounterStore, DistributedCacheRateLimitCounterStore>();
+        //builder.Services.AddSingleton<SlidingWindowStrategy>();
+        builder.Services.AddSingleton<TokenBucketStraregy>();
         var app = builder.Build();
 
         // 設定中繼管道，在流量進入時進行限流判斷
-        app.UseIpRateLimiting();
+        //app.UseIpRateLimiting();
+        //app.UseMiddleware<SlidingWindowMiddleware>();
+        app.UseMiddleware<TokenBucketMiddleware>();
 
         // 這個方法會同步到Redis，將IP限制策略資料寫入Redis如
         // 果是分散式部署，這個方法可能會覆蓋掉已修改的資料，建議集中式管理
@@ -64,6 +72,7 @@ internal class Program
 
             await clientPolicyStore.SeedAsync();
         }
+        
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
